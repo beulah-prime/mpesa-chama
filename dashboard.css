@@ -1,0 +1,135 @@
+:root {
+  --primary: #00A651;
+  --primary-dark: #007F3E;
+
+  --success: #17A2B8;
+  --warning: #F9A825;
+  --danger: #C62828;
+
+  --bg: #F5F7FA;
+  --card-bg: #FFFFFF;
+  --text: #2E2E2E;
+  --muted: #6B7280;
+  --border: #E0E0E0;
+}
+
+/* DARK MODE */
+html[data-theme="dark"] {
+  --bg: #121212;
+  --card-bg: #1E1E1E;
+  --text: #E5E5E5;
+  --muted: #9CA3AF;
+  --border: #2C2C2C;
+}
+
+
+* {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    margin: 0;
+    background-color: var(--bg);
+    color: var(--text);
+    display: flex;
+}
+
+/* sidebar */
+.sidebar {
+    width: 220px;
+    background-color: var(--card-bg);
+    border-right: 1px solid var(--border);
+    padding: 1rem;
+}
+
+.logo {
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+}
+
+.sidebar a{
+    display: block;
+    padding: 0.6rem;
+    color: var(--text);
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 0.4rem;
+}
+
+.sidebar a.active, .sidebar a:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+/* main styles */
+.main {
+    flex: 1;
+    padding: 1.5rem;
+}
+
+/* topbar styles */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+#themeToggle {
+    background-color: var(--card-bg);
+    border: none;
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+    cursor: pointer;
+}
+
+/* cards */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.card {
+    background-color: var(--card-bg);
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.amount {
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.success { color: var(--success)}
+.warning { color: var(--warnings)}
+.danger { color: var(--danger)}
+
+
+/* tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th, td{
+    padding: 0.8rem;
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    background: var(--primary);
+    color: white;
+    text-align: left;
+}
+
+.status-success { color: var(--success); }
+.status-warning { color: var(--warning); }
+.status-danger  { color: var(--danger); }
+

@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+} */
+
+body{
+    background-color: #00A651;
+}
+
+h1{
+    text-align: center;
+    color: black;
+    font-weight: medium;
+}
+
+p{
+    color: grey;
+}
+
+form{
+    background-color: white;
+    width: 450px;
+    margin: auto;
+    padding-left: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: start;
+    display: flex;
+}
+
+.label{
+    display: flex;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+}
+
+.input-type{
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    margin: 0px;
+}
+
+.input-type label{
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.input-type input{
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border-color: grey;
+}
+
+select{
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border-color: grey;
+}
+select:hover{
+    color: black;
+    
+}
+
+.checkbox{
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.mybutton {
+    background-color: #00A651;
+    color: white;
+    padding: 8px;
+    margin-right: 50px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    height: 40px;
+    width: 440px;
+    text-align: center;
+}
+
+.button:hover{
+    background-color: #007F3E;
+}

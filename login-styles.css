@@ -1,0 +1,223 @@
+/* 
+ * Login Page Styles for Chama Management System
+ * 
+ * Custom styling for the login form to ensure proper layout and appearance
+ * 
+ * @author ChamaSys Development Team
+ * @version 1.0
+ * @since 2025
+ */
+
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f0f8f5;
+    background: linear-gradient(135deg, #e0f7e9 0%, #f0f8f5 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Main form container */
+.input {
+    background-color: white;
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 166, 81, 0.15);
+    text-align: center;
+    position: relative;
+    border: 1px solid rgba(0, 166, 81, 0.1);
+}
+
+/* Logo at the top */
+.input .logo {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #00A651;
+    color: white;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0, 166, 81, 0.3);
+}
+
+/* Form headings and text */
+.input h1 {
+    color: #00A651;
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.input p {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 1rem;
+}
+
+/* Form groups and inputs */
+.input-type {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+    margin-top: 15px;
+    color: #333;
+    font-weight: 500;
+}
+
+.input input {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 20px;
+    border: 2px solid #e1e1e1;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.input input:focus {
+    outline: none;
+    border-color: #00A651;
+    box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.2);
+}
+
+/* Login button */
+.mybutton {
+    background-color: #00A651;
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 25px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 166, 81, 0.25);
+}
+
+.mybutton:hover {
+    background-color: #007F3E;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 166, 81, 0.3);
+}
+
+.mybutton:active {
+    transform: translateY(0);
+}
+
+/* Divider */
+.input hr {
+    border: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #ddd, transparent);
+    margin: 25px 0;
+}
+
+/* Footer section */
+.input footer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.input footer p {
+    margin: 8px 0;
+    font-size: 0.9rem;
+}
+
+.input footer a {
+    color: #00A651;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.input footer a:hover {
+    color: #007F3E;
+    text-decoration: underline;
+}
+
+.input footer small {
+    color: #777;
+    display: block;
+    margin-top: 10px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+/* Error and success messages */
+.message {
+    padding: 12px;
+    margin: 15px 0 20px 0;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.message.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+.message.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+    .input {
+        padding: 30px 20px;
+        margin: 10px;
+    }
+    
+    .input h1 {
+        font-size: 1.5rem;
+    }
+    
+    .input .logo {
+        top: -35px;
+        width: 70px;
+        height: 70px;
+        font-size: 1.2rem;
+    }
+}
+
+/* Animation for form */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.input {
+    animation: fadeIn 0.6s ease-out;
+}

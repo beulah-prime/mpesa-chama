@@ -1,0 +1,230 @@
+/* ===== RESET & GLOBAL STYLES ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  background-color: #f6f2ee; /* beige background */
+  color: #222;
+  line-height: 1.6;
+}
+
+/* ===== LINKS & BUTTONS ===== */
+a {
+  text-decoration: none;
+  color: #00A651; /* burgundy */
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.8rem 1.6rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #00A651;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: #007F3E;
+}
+
+.btn-outline {
+  border: 2px solid #00A651;
+  color: #00A651;
+  margin-left: 1rem;
+}
+
+.btn-outline:hover {
+  background-color: #00A651;
+  color: #fff;
+}
+
+/* ===== HEADER / NAVBAR ===== */
+header {
+  background-color: #fff;
+  padding: 1rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.logo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #00A651;
+}
+
+nav a {
+  margin-left: 1.5rem;
+  font-weight: 500;
+}
+
+/* ===== HERO SECTION ===== */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  padding: 4rem 3rem;
+  align-items: center;
+}
+
+.hero-text h1 {
+  font-size: 2.8rem;
+  color: #1f1f1f;
+  margin-bottom: 1rem;
+}
+
+.hero-text span {
+  color: #00A651;
+}
+
+.hero-text p {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  color: #444;
+}
+
+.hero-image img {
+  width: 100%;
+  max-width: 500px;
+}
+
+/* ===== ABOUT SECTION ===== */
+.section {
+  padding: 4rem 3rem;
+  background-color: #fff;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #00A651;
+}
+
+.section-text {
+  max-width: 900px;
+  margin: auto;
+  text-align: center;
+  color: #444;
+}
+
+/* ===== FEATURES ===== */
+.features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.feature-card {
+  background-color: #f9f9f9;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-card h3 {
+  margin-bottom: 0.5rem;
+  color: #00A651;
+}
+
+/* ===== HOW IT WORKS ===== */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.step {
+  text-align: center;
+}
+
+.step-number {
+  width: 45px;
+  height: 45px;
+  margin: auto;
+  border-radius: 50%;
+  background-color: #00A651;
+  color: #fff;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+/* ===== CALL TO ACTION ===== */
+.cta {
+  background-color: #00A651;
+  color: #fff;
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.cta h2 {
+  margin-bottom: 1rem;
+}
+
+.cta p {
+  margin-bottom: 2rem;
+}
+
+.cta .btn {
+  background-color: #fff;
+  color: #00A651;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  background-color: #1f1f1f;
+  color: #ddd;
+  padding: 2rem;
+  text-align: center;
+}
+
+footer a {
+  color: #f4c2c2;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .features,
+  .steps {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+  header {
+    flex-direction: column;
+  }
+
+  nav a {
+    margin: 0 0.5rem;
+  }
+
+  .features,
+  .steps {
+    grid-template-columns: 1fr;
+  }
+}
