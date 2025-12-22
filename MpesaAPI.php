@@ -49,11 +49,30 @@ class MpesaAPI {
         $this->business_short_code = $settings->getSetting('mpesa_business_shortcode');
         $this->passkey = $settings->getSetting('mpesa_passkey');
         
-        // Set callback URLs - adjust as needed for your domain
-        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-        $domain = $_SERVER['HTTP_HOST'];
-        $this->callback_url = $protocol . '://' . $domain . '/mpesa_callback.php';
-        $this->timeout_url = $protocol . '://' . $domain . '/mpesa_timeout.php';
+        // Set callback URLs - get from settings or generate based on domain
+        $settings = new Settings();
+        $callback_url_setting = $settings->getSetting('mpesa_callback_url');
+        $timeout_url_setting = $settings->getSetting('mpesa_timeout_url');
+
+        if ($callback_url_setting && $timeout_url_setting) {
+            // Use callback URLs from settings
+            $this->callback_url = $callback_url_setting;
+            $this->timeout_url = $timeout_url_setting;
+        } else {
+            // Generate callback URLs based on current domain
+            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+            $domain = $_SERVER['HTTP_HOST'];
+
+            // For localhost, we'll use a placeholder - you need to update this to a public URL
+            if ($domain === 'localhost' || strpos($domain, '127.0.0.1') !== false || strpos($domain, '192.168.') !== false) {
+                // This is a placeholder - you need to use a public URL like from ngrok
+                $this->callback_url = 'https://your-public-domain.ngrok.io/mpesa_callback.php';
+                $this->timeout_url = 'https://your-public-domain.ngrok.io/mpesa_timeout.php';
+            } else {
+                $this->callback_url = $protocol . '://' . $domain . '/mpesa_callback.php';
+                $this->timeout_url = $protocol . '://' . $domain . '/mpesa_timeout.php';
+            }
+        }
     }
     
     /**

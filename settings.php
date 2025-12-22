@@ -61,14 +61,18 @@ if ($_POST && isset($_POST['save_settings'])) {
     $mpesa_consumer_secret = trim($_POST['mpesa_consumer_secret']);
     $mpesa_business_shortcode = trim($_POST['mpesa_business_shortcode']);
     $mpesa_passkey = trim($_POST['mpesa_passkey']);
+    $mpesa_callback_url = trim($_POST['mpesa_callback_url']);
+    $mpesa_timeout_url = trim($_POST['mpesa_timeout_url']);
     $interest_rate_default = floatval($_POST['interest_rate_default']);
     $fine_amount_default = floatval($_POST['fine_amount_default']);
-    
+
     // Update settings in the database
     $settings->updateSetting('mpesa_consumer_key', $mpesa_consumer_key);
     $settings->updateSetting('mpesa_consumer_secret', $mpesa_consumer_secret);
     $settings->updateSetting('mpesa_business_shortcode', $mpesa_business_shortcode);
     $settings->updateSetting('mpesa_passkey', $mpesa_passkey);
+    $settings->updateSetting('mpesa_callback_url', $mpesa_callback_url);
+    $settings->updateSetting('mpesa_timeout_url', $mpesa_timeout_url);
     $settings->updateSetting('interest_rate_default', $interest_rate_default);
     $settings->updateSetting('fine_amount_default', $fine_amount_default);
     
@@ -80,6 +84,8 @@ $mpesa_consumer_key = $settings->getSetting('mpesa_consumer_key') ?: '';
 $mpesa_consumer_secret = $settings->getSetting('mpesa_consumer_secret') ?: '';
 $mpesa_business_shortcode = $settings->getSetting('mpesa_business_shortcode') ?: '';
 $mpesa_passkey = $settings->getSetting('mpesa_passkey') ?: '';
+$mpesa_callback_url = $settings->getSetting('mpesa_callback_url') ?: '';
+$mpesa_timeout_url = $settings->getSetting('mpesa_timeout_url') ?: '';
 $interest_rate_default = $settings->getSetting('interest_rate_default') ?: '10.00';
 $fine_amount_default = $settings->getSetting('fine_amount_default') ?: '500.00';
 ?>
@@ -223,9 +229,25 @@ $fine_amount_default = $settings->getSetting('fine_amount_default') ?: '500.00';
 
                 <div class="form-group">
                     <label for="mpesa_passkey">Passkey:</label>
-                    <input type="password" id="mpesa_passkey" name="mpesa_passkey" 
-                           value="<?php echo htmlspecialchars($mpesa_passkey); ?>" 
+                    <input type="password" id="mpesa_passkey" name="mpesa_passkey"
+                           value="<?php echo htmlspecialchars($mpesa_passkey); ?>"
                            placeholder="Enter your Passkey">
+                </div>
+
+                <h3>M-Pesa Callback URLs</h3>
+
+                <div class="form-group">
+                    <label for="mpesa_callback_url">Callback URL:</label>
+                    <input type="url" id="mpesa_callback_url" name="mpesa_callback_url"
+                           value="<?php echo htmlspecialchars($mpesa_callback_url); ?>"
+                           placeholder="https://yourdomain.com/mpesa_callback.php">
+                </div>
+
+                <div class="form-group">
+                    <label for="mpesa_timeout_url">Timeout URL:</label>
+                    <input type="url" id="mpesa_timeout_url" name="mpesa_timeout_url"
+                           value="<?php echo htmlspecialchars($mpesa_timeout_url); ?>"
+                           placeholder="https://yourdomain.com/mpesa_timeout.php">
                 </div>
 
                 <h3>Default System Settings</h3>

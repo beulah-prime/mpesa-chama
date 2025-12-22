@@ -156,4 +156,6 @@ INSERT IGNORE INTO settings (setting_key, setting_value, description) VALUES
 ('mpesa_consumer_key', '', 'M-Pesa API Consumer Key'),
 ('mpesa_consumer_secret', '', 'M-Pesa API Consumer Secret'),
 ('mpesa_business_shortcode', '', 'M-Pesa Business Shortcode'),
-('mpesa_passkey', '', 'M-Pesa Passkey for generating password');
+('mpesa_passkey', '', 'M-Pesa Passkey for generating password'),
+('mpesa_callback_url', '', 'M-Pesa Callback URL for payment confirmations'),
+('mpesa_timeout_url', '', 'M-Pesa Timeout URL for payment timeouts');
