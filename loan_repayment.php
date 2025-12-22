@@ -138,110 +138,8 @@ if ($_POST && isset($_POST['initiate_repayment'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loan Repayment - Chama Management System</title>
-    <link rel="stylesheet" href="dash-mod.css">
-    <style>
-        .repayment-container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        
-        input[type="number"], select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        
-        button {
-            background-color: #00A651;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        
-        button:hover {
-            background-color: #008542;
-        }
-        
-        .status-card {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-        
-        .message {
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
-        
-        .message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .message.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .repayment-info {
-            background-color: #e7f3ff;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .repayments-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        
-        .repayments-table th, .repayments-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .repayments-table th {
-            background-color: #00A651;
-            color: white;
-        }
-        
-        .status-pending {
-            color: orange;
-        }
-        
-        .status-paid {
-            color: green;
-        }
-        
-        .status-overdue {
-            color: red;
-        }
-    </style>
+    <link rel="stylesheet" href="loan_repayment.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -257,39 +155,41 @@ if ($_POST && isset($_POST['initiate_repayment'])) {
 
             <div class="sidebar">
                 <a href="Members.php">
-                    <span class="material-icons-sharp">grid_view</span>
+                    <span class="material-icons-sharp">dashboard</span>
                     <h3>Dashboard</h3>
                 </a>
                 <a href="Contributions.php">
-                    <span class="material-icons-sharp">grid_view</span>
+                    <span class="material-icons-sharp">payments</span>
                     <h3>My Contributions</h3>
                 </a>
                 <a href="payment.php">
-                    <span class="material-icons-sharp">grid_view</span>
+                    <span class="material-icons-sharp">payment</span>
                     <h3>Make Payment</h3>
                 </a>
                 <a href="Loans.php" class="active">
-                    <span class="material-icons-sharp">grid_view</span>
+                    <span class="material-icons-sharp">receipt_long</span>
                     <h3>My Loans</h3>
                 </a>
                 <a href="loan_repayment.php">
-                    <span class="material-icons-sharp">grid_view</span>
+                    <span class="material-icons-sharp">sync_alt</span>
                     <h3>Loan Repayment</h3>
                 </a>
                 <a href="Fines.php">
-                    <span class="material-icons-sharp">grid_view</span>
+                    <span class="material-icons-sharp">warning</span>
                     <h3>My Fines</h3>
                 </a>
                 <a href="logout.php">
-                    <span class="material-icons-sharp">grid_view</span>
+                    <span class="material-icons-sharp">logout</span>
                     <h3>Logout</h3>
                 </a>
             </div>
         </aside>
-    </div>
 
-    <main class="main-content">
-        <div class="repayment-container">
+        <!-- Mobile menu button -->
+        <button class="menu-btn" id="menu-btn">☰</button>
+
+        <main class="main-content">
+            <div class="repayment-container">
             <h1>Loan Repayment</h1>
             <p>Welcome, <?php echo htmlspecialchars($user['full_name']); ?>. Make a loan repayment using M-Pesa.</p>
             
@@ -368,10 +268,31 @@ if ($_POST && isset($_POST['initiate_repayment'])) {
     </main>
 
     <script>
-        // Close button functionality
-        document.getElementById('close-btn').addEventListener('click', function() {
-            document.querySelector('aside').style.display = 'none';
+        // Mobile menu toggle functionality
+        const menuBtn = document.getElementById('menu-btn');
+        const sidebar = document.querySelector('aside');
+        const closeBtn = document.getElementById('close-btn');
+
+        menuBtn.addEventListener('click', function() {
+            sidebar.classList.add('show');
+        });
+
+        closeBtn.addEventListener('click', function() {
+            sidebar.classList.remove('show');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isClickOnMenuBtn = menuBtn.contains(event.target);
+
+            if (!isClickInsideSidebar && !isClickOnMenuBtn && window.innerWidth <= 768) {
+                sidebar.classList.remove('show');
+            }
         });
     </script>
+
+    </main>
+    </div>
 </body>
 </html>
