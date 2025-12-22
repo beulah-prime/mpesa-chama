@@ -99,289 +99,8 @@ foreach ($contributions as $c) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Member Dashboard - Chama Management System</title>
-    <link rel="stylesheet" href="dash-mod.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            color: #333;
-        }
-
-        .container {
-            display: flex;
-        }
-
-        aside {
-            width: 260px;
-            background: linear-gradient(180deg, #00A651, #00783d);
-            color: white;
-            height: 100vh;
-            position: fixed;
-            overflow-y: auto;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            box-shadow: 3px 0 10px rgba(0,0,0,0.1);
-        }
-
-        .top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            background: rgba(0,0,0,0.1);
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: white;
-            text-decoration: none;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-
-        .close {
-            display: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .sidebar a {
-            display: flex;
-            align-items: center;
-            padding: 15px 20px;
-            text-decoration: none;
-            color: #ffffff;
-            transition: all 0.3s ease;
-            border-left: 4px solid transparent;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: rgba(255,255,255,0.2);
-            color: #ffffff;
-            border-left: 4px solid #fff;
-        }
-
-        .sidebar a span {
-            margin-right: 12px;
-            font-size: 1.2rem;
-        }
-
-        .dashboard-content {
-            flex: 1;
-            margin-left: 260px;
-            padding: 30px;
-        }
-
-        h1 {
-            color: #00A651;
-            margin-bottom: 10px;
-            font-size: 2rem;
-        }
-
-        h2 {
-            color: #00A651;
-            margin: 25px 0 15px 0;
-            font-size: 1.5rem;
-            border-bottom: 2px solid #00A651;
-            padding-bottom: 8px;
-        }
-
-        .summary-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        .summary-card {
-            background: linear-gradient(135deg, #ffffff, #f8f9fa);
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            text-align: center;
-            transition: transform 0.3s ease;
-            border: 1px solid #e9ecef;
-        }
-
-        .summary-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-        }
-
-        .summary-card h3 {
-            margin-top: 0;
-            color: #00A651;
-            font-size: 1rem;
-            margin-bottom: 10px;
-        }
-
-        .summary-card h2 {
-            margin-bottom: 0;
-            font-size: 2rem;
-            color: #2c3e50;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
-        }
-
-        .data-table th, .data-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-
-        .data-table th {
-            background: linear-gradient(135deg, #00A651, #008542);
-            color: white;
-            font-weight: 600;
-        }
-
-        .data-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .data-table tr:hover {
-            background-color: #f8f9fa;
-        }
-
-        .status-pending {
-            color: #ffc107;
-            font-weight: 500;
-        }
-
-        .status-approved, .status-confirmed, .status-paid {
-            color: #28a745;
-            font-weight: 500;
-        }
-
-        .status-rejected, .status-failed {
-            color: #dc3545;
-            font-weight: 500;
-        }
-
-        .status-active {
-            color: #28a745;
-            font-weight: 500;
-        }
-
-        .status-inactive {
-            color: #dc3545;
-            font-weight: 500;
-        }
-
-        .profile-section, .settings-section {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            margin-top: 30px;
-        }
-
-        .profile-info p {
-            margin: 10px 0;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .profile-info p:last-child {
-            border-bottom: none;
-        }
-
-        .profile-info strong {
-            display: inline-block;
-            width: 150px;
-            color: #00A651;
-        }
-
-        #changePasswordForm {
-            max-width: 500px;
-            margin-top: 20px;
-        }
-
-        #changePasswordForm div {
-            margin-bottom: 20px;
-        }
-
-        #changePasswordForm label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #333;
-        }
-
-        #changePasswordForm input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-
-        #changePasswordForm button {
-            background: linear-gradient(135deg, #00A651, #008542);
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        #changePasswordForm button:hover {
-            background: linear-gradient(135deg, #008542, #006431);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 166, 81, 0.3);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-
-            aside {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-
-            .close {
-                display: block;
-            }
-
-            .sidebar {
-                display: none;
-            }
-
-            .sidebar.active {
-                display: block;
-            }
-
-            .dashboard-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-
-            .summary-cards {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="member-dashboard.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -397,39 +116,39 @@ foreach ($contributions as $c) {
 
             <div class="sidebar">
                 <a href="Members.php" class="active">
-                    <span class="material-icons-sharp">grid_view</span>
+                    <span class="material-icons">dashboard</span>
                     <h3>Dashboard</h3>
                 </a>
                 <a href="Contributions.php">
-                    <span class="material-icons-sharp">grid_view</span>
+                    <span class="material-icons">payments</span>
                     <h3>My Contributions</h3>
                 </a>
                 <a href="payment.php">
-                    <span class="material-icons-sharp">grid_view</span>
+                    <span class="material-icons">payment</span>
                     <h3>Make Payment</h3>
                 </a>
                 <a href="Loans.php">
-                    <span class="material-icons-sharp">grid_view</span>
+                    <span class="material-icons">receipt_long</span>
                     <h3>My Loans</h3>
                 </a>
                 <a href="loan_repayment.php">
-                    <span class="material-icons-sharp">grid_view</span>
+                    <span class="material-icons">sync_alt</span>
                     <h3>Loan Repayment</h3>
                 </a>
                 <a href="Members.php#my-fines">
-                    <span class="material-icons-sharp">grid_view</span>
+                    <span class="material-icons">gavel</span>
                     <h3>My Fines</h3>
                 </a>
                 <a href="#profile">
-                    <span class="material-icons-sharp">grid_view</span>
+                    <span class="material-icons">person</span>
                     <h3>Profile</h3>
                 </a>
                 <a href="#settings">
-                    <span class="material-icons-sharp">grid_view</span>
+                    <span class="material-icons">settings</span>
                     <h3>Settings</h3>
                 </a>
                 <a href="logout.php">
-                    <span class="material-icons-sharp">grid_view</span>
+                    <span class="material-icons">logout</span>
                     <h3>Logout</h3>
                 </a>
             </div>

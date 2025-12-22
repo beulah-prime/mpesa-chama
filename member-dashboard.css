@@ -1,0 +1,387 @@
+/* Minimal consolidated CSS for Member Dashboard */ 
+/* CSS Variables - based on the green theme used in Members.php */ 
+:root {  
+  --primary: #00A651;  
+  --primary-dark: #007F3E;  
+  --primary-darker: #006431;  
+  --success: #28a745;  
+  --warning: #ffc107;  
+  --danger: #dc3545;  
+  --bg: #f5f7fa;  
+  --card-bg: #ffffff;  
+  --text: #333;  
+  --muted: #6B7280;  
+  --border: #e0e0e0;  
+  --sidebar-bg: linear-gradient(180deg, #00A651, #00783d);  
+  --font-family: \"Segoe UI\", Tahoma, Geneva, Verdana, sans-serif;  
+} 
+  
+/* DARK MODE */  
+html[data-theme=\"dark\"] {  
+  --bg: #121212;  
+  --card-bg: #1E1E1E;  
+  --text: #E5E5E5;  
+  --muted: #9CA3AF;  
+  --border: #2C2C2C;  
+}  
+  
+/* Reset and base styles */  
+* {  
+    margin: 0;  
+    padding: 0;  
+    box-sizing: border-box;  
+} 
+  
+body {  
+    font-family: var(--font-family);  
+    background-color: var(--bg);  
+    color: var(--text);  
+    overflow-x: hidden;  
+}  
+  
+/* Layout */
+.container {
+    display: flex;
+}
+
+/* Material icons support */
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;  /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-font-feature-settings: 'liga';
+    -moz-font-feature-settings: 'liga';
+    font-feature-settings: 'liga';
+}
+
+.material-icons {
+    font-size: 1.2rem;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+/* Additional base styles */
+a {
+    color: black;
+}
+
+img {
+    display: block;
+    width: 100%;
+}
+
+/* Text styles */
+h3 {
+    font-size: 0.87rem;
+}
+
+h4 {
+    font-size: 0.8rem;
+}
+
+h5 {
+    font-size: 0.77rem;
+}
+
+small {
+    font-size: 0.75rem;
+}
+
+.profile-photo {
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+/* text muted */
+.text-muted {
+    color: var(--muted-foreground);
+}
+
+p {
+    color: var(--foreground);
+}
+
+/* Override generic h1/h2 styles with member dashboard specific styles */
+h1 {
+    color: var(--primary);
+    margin-bottom: 10px;
+    font-size: 2rem;
+}
+
+h2 {
+    color: var(--primary);
+    margin: 25px 0 15px 0;
+    font-size: 1.5rem;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 8px;
+}
+
+aside {
+    width: 260px;
+    background: var(--sidebar-bg);
+    color: white;
+    height: 100vh;
+    position: fixed;
+    overflow-y: auto;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.1);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.close {
+    display: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    text-decoration: none;
+    color: #ffffff;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+}
+
+.sidebar a:hover, .sidebar a.active {
+    background: rgba(255,255,255,0.2);
+    color: #ffffff;
+    border-left: 4px solid #fff;
+}
+
+.sidebar a span {
+    margin-right: 12px;
+    font-size: 1.2rem;
+}
+
+.dashboard-content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 30px;
+}
+
+/* Summary Cards */
+.summary-cards {  
+    display: grid;  
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));  
+    gap: 25px;  
+    margin-bottom: 40px;  
+}  
+  
+.summary-card {  
+    background: linear-gradient(135deg, var(--card-bg), #f8f9fa);  
+    padding: 25px;  
+    border-radius: 12px;  
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);  
+    text-align: center;  
+    transition: transform 0.3s ease;  
+    border: 1px solid #e9ecef;  
+}  
+  
+.summary-card:hover {  
+    transform: translateY(-5px);  
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);  
+}  
+  
+.summary-card h3 {  
+    margin-top: 0;  
+    color: var(--primary);  
+    font-size: 1rem;  
+    margin-bottom: 10px;  
+}  
+  
+.summary-card h2 {  
+    margin-bottom: 0;  
+    font-size: 2rem;  
+    color: #2c3e50;  
+} 
+  
+/* Data Tables */  
+.data-table {  
+    width: 100%;  
+    border-collapse: collapse;  
+    background-color: var(--card-bg);  
+    border-radius: 10px;  
+    overflow: hidden;  
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);  
+    margin-bottom: 30px;  
+}  
+  
+.data-table th, .data-table td {  
+    padding: 15px;  
+    text-align: left;  
+    border-bottom: 1px solid #eee;  
+}  
+  
+.data-table th {  
+    background: linear-gradient(135deg, var(--primary), var(--primary-darker));  
+    color: white;  
+    font-weight: 600;  
+}  
+  
+.data-table tr:last-child td {  
+    border-bottom: none;  
+}  
+  
+.data-table tr:hover {  
+    background-color: #f8f9fa;  
+} 
+  
+/* Status Classes */  
+.status-pending {  
+    color: var(--warning);  
+    font-weight: 500;  
+}  
+  
+.status-approved, .status-confirmed, .status-paid {  
+    color: var(--success);  
+    font-weight: 500;  
+}  
+  
+.status-rejected, .status-failed {  
+    color: var(--danger);  
+    font-weight: 500;  
+}  
+  
+.status-active {  
+    color: var(--success);  
+    font-weight: 500;  
+}  
+  
+.status-inactive {  
+    color: var(--danger);  
+    font-weight: 500;  
+}  
+  
+/* Profile and Settings Sections */  
+.profile-section, .settings-section {  
+    background: var(--card-bg);  
+    padding: 25px;  
+    border-radius: 10px;  
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);  
+    margin-top: 30px;  
+} 
+  
+.profile-info p {  
+    margin: 10px 0;  
+    padding: 8px 0;  
+    border-bottom: 1px solid #eee;  
+}  
+  
+.profile-info p:last-child {  
+    border-bottom: none;  
+}  
+  
+.profile-info strong {  
+    display: inline-block;  
+    width: 150px;  
+    color: var(--primary);  
+}  
+  
+/* Form Styles */  
+#changePasswordForm {  
+    max-width: 500px;  
+    margin-top: 20px;  
+}  
+  
+#changePasswordForm div {  
+    margin-bottom: 20px;  
+}  
+  
+#changePasswordForm label {  
+    display: block;  
+    margin-bottom: 8px;  
+    font-weight: 500;  
+    color: var(--text);  
+}  
+  
+#changePasswordForm input {  
+    width: 100%;  
+    padding: 12px;  
+    border: 1px solid #ddd;  
+    border-radius: 6px;  
+    font-size: 1rem;  
+}  
+  
+#changePasswordForm button {  
+    background: linear-gradient(135deg, var(--primary), var(--primary-darker));  
+    color: white;  
+    padding: 12px 25px;  
+    border: none;  
+    border-radius: 6px;  
+    cursor: pointer;  
+    font-size: 1rem;  
+    font-weight: 500;  
+    transition: all 0.3s ease;  
+}  
+  
+#changePasswordForm button:hover {  
+    background: linear-gradient(135deg, var(--primary-darker), #005027);  
+    transform: translateY(-2px);  
+    box-shadow: 0 5px 15px rgba(0, 166, 81, 0.3);  
+} 
+  
+/* Responsive Design */  
+@media (max-width: 768px) {  
+    .container {  
+        flex-direction: column;  
+    }  
+  
+    aside {  
+        width: 100%;  
+        height: auto;  
+        position: relative;  
+    }  
+  
+    .close {  
+        display: block;  
+    }  
+  
+    .sidebar {  
+        display: none;  
+    }  
+  
+    .sidebar.active {  
+        display: block;  
+    }  
+  
+    .dashboard-content {  
+        margin-left: 0;  
+        padding: 20px;  
+    }  
+  
+    .summary-cards {  
+        grid-template-columns: 1fr;  
+    }  
+} 
