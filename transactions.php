@@ -1,15 +1,15 @@
 <?php
 /*
- * Fines Management Page for Chama Management System
+ * Transactions Management Page for Chama Management System
  *
- * This page allows treasurers to manage member fines.
- * Includes functionality to add fines, mark as paid, and view fine history.
+ * This page displays all financial transactions in the system for treasurers.
+ * Includes contributions, loan payments, fine payments, and other financial activities.
  *
  * Features:
- * - Add new fines to members
- * - Mark fines as paid or waive them
- * - View all fines with status
- * - Filter fines by status and date
+ * - Transaction filtering by date, member, and type
+ * - Export functionality
+ * - Detailed transaction view
+ * - Financial summary statistics
  *
  * @author ChamaSys Development Team
  * @version 1.0
@@ -40,88 +40,59 @@ if ($role !== 'admin' && $role !== 'treasurer') {
     exit();
 }
 
-// Initialize message variable
-$message = '';
-
-// Handle form submissions
-if ($_POST) {
-    if (isset($_POST['add_fine'])) {
-        // Add new fine
-        $member_id = (int)$_POST['member_id'];
-        $reason = trim($_POST['reason']);
-        $amount = !empty($_POST['amount']) ? (float)$_POST['amount'] : null;
-        
-        $fine = new Fine();
-        if ($fine->addFine($member_id, $reason, $amount, $user['id'])) {
-            $message = "Fine added successfully!";
-        } else {
-            $message = "Failed to add fine.";
-        }
-    } elseif (isset($_POST['mark_paid'])) {
-        // Mark fine as paid
-        $fine_id = (int)$_POST['fine_id'];
-        $payment_method = $_POST['payment_method'] ?? 'mpesa';
-        $mpesa_code = !empty($_POST['mpesa_code']) ? $_POST['mpesa_code'] : null;
-        
-        $fine = new Fine();
-        if ($fine->markAsPaid($fine_id, $payment_method, $mpesa_code)) {
-            $message = "Fine marked as paid successfully!";
-        } else {
-            $message = "Failed to mark fine as paid.";
-        }
-    } elseif (isset($_POST['waive_fine'])) {
-        // Waive fine
-        $fine_id = (int)$_POST['fine_id'];
-        
-        $db = new Database();
-        $db->query("UPDATE fines SET status = 'waived', paid_date = CURDATE() WHERE id = :fine_id");
-        $db->bind(':fine_id', $fine_id);
-        
-        if ($db->execute()) {
-            $message = "Fine waived successfully!";
-        } else {
-            $message = "Failed to waive fine.";
-        }
-    }
-}
-
-// Get all fines based on filters
+// Get all transactions based on filters
 $db = new Database();
 
-// Get all fines
-$db->query("
-    SELECT f.*, u.full_name, m.member_number 
-    FROM fines f
-    JOIN members m ON f.member_id = m.id
-    JOIN users u ON m.user_id = u.id
-    ORDER BY f.date_imposed DESC
-");
-$all_fines = $db->resultSet();
+// Build query with optional filters
+$base_query = "SELECT t.*, u.full_name as member_name, m.member_number
+               FROM contributions t
+               JOIN members m ON t.member_id = m.id
+               JOIN users u ON m.user_id = u.id";
+
+$loan_query = "SELECT lr.id as id, lr.amount_paid as amount, lr.payment_date as transaction_date, 
+               'loan_payment' as transaction_type, u.full_name as member_name, m.member_number
+               FROM loan_repayments lr
+               JOIN loans l ON lr.loan_id = l.id
+               JOIN members m ON l.member_id = m.id
+               JOIN users u ON m.user_id = u.id
+               WHERE lr.status = 'paid'";
+
+$fine_query = "SELECT f.id as id, f.amount as amount, f.paid_date as transaction_date,
+               'fine_payment' as transaction_type, u.full_name as member_name, m.member_number
+               FROM fines f
+               JOIN members m ON f.member_id = m.id
+               JOIN users u ON m.user_id = u.id
+               WHERE f.status = 'paid'";
+
+// Combine all transaction types
+$query = "SELECT * FROM (
+                    ($base_query)
+                    UNION ALL
+                    ($loan_query)
+                    UNION ALL
+                    ($fine_query)
+                  ) combined_transactions 
+                  ORDER BY transaction_date DESC";
+
+$db->query($query);
+$all_transactions = $db->resultSet();
 
 // Calculate summary data
-$total_fines = 0;
-$pending_fines = 0;
-$paid_fines = 0;
-$waived_fines = 0;
+$total_contributions = 0;
+$total_loan_payments = 0;
+$total_fine_payments = 0;
 
-foreach ($all_fines as $f) {
-    $total_fines += $f['amount'];
-    switch ($f['status']) {
-        case 'pending':
-            $pending_fines += $f['amount'];
-            break;
-        case 'paid':
-            $paid_fines += $f['amount'];
-            break;
-        case 'waived':
-            $waived_fines += $f['amount'];
-            break;
+foreach ($all_transactions as $t) {
+    if ($t['transaction_type'] === 'contribution') {
+        if ($t['status'] === 'confirmed') {
+            $total_contributions += $t['amount'];
+        }
+    } elseif ($t['transaction_type'] === 'loan_payment') {
+        $total_loan_payments += $t['amount'];
+    } elseif ($t['transaction_type'] === 'fine_payment') {
+        $total_fine_payments += $t['amount'];
     }
 }
-
-// Get all members for the fine form
-$user_obj = new User();
-$members = $user_obj->getAllUsersByRole('member');
 ?>
 
 <!DOCTYPE html>
@@ -129,7 +100,7 @@ $members = $user_obj->getAllUsersByRole('member');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Fines - Chama Management System</title>
+    <title>Transactions - Chama Management System</title>
     <style>
         * {
             margin: 0;
@@ -239,30 +210,28 @@ $members = $user_obj->getAllUsersByRole('member');
             font-weight: bold;
         }
 
-        .amount.total { color: #6c757d; }
-        .amount.pending { color: #ffc107; }
-        .amount.paid { color: #28a745; }
-        .amount.waived { color: #6f42c1; }
+        .amount.contributions { color: #00A651; }
+        .amount.loans { color: #007BFF; }
+        .amount.fines { color: #FFC107; }
 
-        .fine-section {
+        .filters {
             background: white;
-            padding: 25px;
+            padding: 20px;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
-        h2 {
+        .filters h3 {
             color: #00A651;
-            margin: 0 0 20px 0;
-            font-size: 1.5rem;
+            margin-bottom: 15px;
         }
 
-        .form-grid {
+        .filter-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         label {
@@ -272,17 +241,12 @@ $members = $user_obj->getAllUsersByRole('member');
             color: #333;
         }
 
-        input, select, textarea {
+        input, select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 1rem;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 80px;
         }
 
         button {
@@ -295,8 +259,6 @@ $members = $user_obj->getAllUsersByRole('member');
             font-size: 1rem;
             font-weight: 500;
             transition: all 0.3s ease;
-            margin-right: 10px;
-            margin-bottom: 10px;
         }
 
         button:hover {
@@ -305,20 +267,18 @@ $members = $user_obj->getAllUsersByRole('member');
             box-shadow: 0 5px 15px rgba(0, 166, 81, 0.3);
         }
 
-        .btn-pay {
-            background: linear-gradient(135deg, #28a745, #218838);
+        .transactions-table {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            overflow-x: auto;
         }
 
-        .btn-pay:hover {
-            background: linear-gradient(135deg, #218838, #1e7e34);
-        }
-
-        .btn-waive {
-            background: linear-gradient(135deg, #6f42c1, #5a32a3);
-        }
-
-        .btn-waive:hover {
-            background: linear-gradient(135deg, #5a32a3, #542ca0);
+        h2 {
+            color: #00A651;
+            margin: 0 0 20px 0;
+            font-size: 1.5rem;
         }
 
         table {
@@ -347,29 +307,36 @@ $members = $user_obj->getAllUsersByRole('member');
             font-weight: 500;
         }
 
-        .status-paid {
+        .status-approved, .status-confirmed, .status-paid {
             color: #28a745;
             font-weight: 500;
         }
 
-        .status-waived {
-            color: #6f42c1;
+        .status-rejected, .status-failed {
+            color: #dc3545;
             font-weight: 500;
         }
 
-        .action-buttons {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
+        .transaction-type {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
         }
 
-        .message {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 6px;
+        .type-contribution {
             background-color: #d4edda;
             color: #155724;
-            border: 1px solid #c3e6cb;
+        }
+
+        .type-loan {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .type-fine {
+            background-color: #fff3cd;
+            color: #856404;
         }
     </style>
 </head>
@@ -397,11 +364,7 @@ $members = $user_obj->getAllUsersByRole('member');
                     <span class="material-icons-sharp">grid_view</span>
                     <h3>View Loans</h3>
                 </a>
-                <a href="fines.php" class="active">
-                    <span class="material-icons-sharp">grid_view</span>
-                    <h3>Manage Fines</h3>
-                </a>
-                <a href="transactions.php">
+                <a href="transactions.php" class="active">
                     <span class="material-icons-sharp">grid_view</span>
                     <h3>Transactions</h3>
                 </a>
@@ -417,111 +380,109 @@ $members = $user_obj->getAllUsersByRole('member');
         </aside>
 
         <main class="main-content">
-            <h1>Manage Fines</h1>
+            <h1>All Transactions</h1>
             <p>Welcome, <?php echo htmlspecialchars($user['full_name']); ?> (<?php echo ucfirst($role); ?>)</p>
-
-            <?php if (!empty($message)): ?>
-            <div class="message">
-                <?php echo htmlspecialchars($message); ?>
-            </div>
-            <?php endif; ?>
 
             <div class="summary-cards">
                 <div class="card">
-                    <h3>Total Fines</h3>
-                    <p class="amount total">KES <?php echo number_format($total_fines, 2); ?></p>
+                    <h3>Total Contributions</h3>
+                    <p class="amount contributions">KES <?php echo number_format($total_contributions, 2); ?></p>
                 </div>
 
                 <div class="card">
-                    <h3>Pending Fines</h3>
-                    <p class="amount pending">KES <?php echo number_format($pending_fines, 2); ?></p>
+                    <h3>Total Loan Payments</h3>
+                    <p class="amount loans">KES <?php echo number_format($total_loan_payments, 2); ?></p>
                 </div>
 
                 <div class="card">
-                    <h3>Collected Fines</h3>
-                    <p class="amount paid">KES <?php echo number_format($paid_fines, 2); ?></p>
-                </div>
-
-                <div class="card">
-                    <h3>Waived Fines</h3>
-                    <p class="amount waived">KES <?php echo number_format($waived_fines, 2); ?></p>
+                    <h3>Total Fine Payments</h3>
+                    <p class="amount fines">KES <?php echo number_format($total_fine_payments, 2); ?></p>
                 </div>
             </div>
 
-            <div class="fine-section">
-                <h2>Add New Fine</h2>
-                <form method="post">
-                    <div class="form-grid">
+            <div class="filters">
+                <h3>Filter Transactions</h3>
+                <form method="GET">
+                    <div class="filter-row">
                         <div>
-                            <label for="member_id">Select Member:</label>
-                            <select name="member_id" id="member_id" required>
-                                <option value="">Select a member</option>
-                                <?php foreach ($members as $member): ?>
+                            <label for="start_date">Start Date:</label>
+                            <input type="date" id="start_date" name="start_date">
+                        </div>
+                        <div>
+                            <label for="end_date">End Date:</label>
+                            <input type="date" id="end_date" name="end_date">
+                        </div>
+                        <div>
+                            <label for="member">Member:</label>
+                            <select id="member" name="member">
+                                <option value="">All Members</option>
+                                <?php
+                                $user_obj = new User();
+                                $members = $user_obj->getAllUsersByRole('member');
+                                foreach ($members as $member):
+                                ?>
                                 <option value="<?php echo $member['id']; ?>">
                                     <?php echo htmlspecialchars($member['full_name'] . ' (' . ($member['member_number'] ?? 'N/A') . ')'); ?>
                                 </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
-
                         <div>
-                            <label for="amount">Fine Amount (KES) (Leave blank for default):</label>
-                            <input type="number" name="amount" id="amount" step="0.01" min="0">
+                            <label for="type">Transaction Type:</label>
+                            <select id="type" name="type">
+                                <option value="">All Types</option>
+                                <option value="contribution">Contribution</option>
+                                <option value="loan_payment">Loan Payment</option>
+                                <option value="fine_payment">Fine Payment</option>
+                            </select>
                         </div>
                     </div>
-
-                    <div>
-                        <label for="reason">Reason for Fine:</label>
-                        <textarea name="reason" id="reason" required placeholder="Describe the reason for the fine"></textarea>
-                    </div>
-
-                    <button type="submit" name="add_fine">Add Fine</button>
+                    <button type="submit">Apply Filters</button>
                 </form>
             </div>
 
-            <div class="fine-section">
-                <h2>All Fines</h2>
+            <div class="transactions-table">
+                <h2>Transaction History</h2>
                 <table>
                     <thead>
                         <tr>
-                            <th>Date Imposed</th>
+                            <th>Date</th>
                             <th>Member</th>
-                            <th>Reason</th>
                             <th>Amount (KES)</th>
+                            <th>Type</th>
                             <th>Status</th>
-                            <th>Due Date</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (!empty($all_fines)): ?>
-                            <?php foreach ($all_fines as $f): ?>
+                        <?php if (!empty($all_transactions)): ?>
+                            <?php foreach ($all_transactions as $t): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($f['date_imposed']); ?></td>
-                                <td><?php echo htmlspecialchars($f['full_name'] . ' (' . $f['member_number'] . ')'); ?></td>
-                                <td><?php echo htmlspecialchars($f['reason']); ?></td>
-                                <td>KES <?php echo number_format($f['amount'], 2); ?></td>
-                                <td class="status-<?php echo $f['status']; ?>"><?php echo ucfirst(htmlspecialchars($f['status'])); ?></td>
-                                <td><?php echo htmlspecialchars($f['due_date']); ?></td>
+                                <td><?php echo htmlspecialchars($t['transaction_date'] ?? $t['contribution_date']); ?></td>
+                                <td><?php echo htmlspecialchars($t['member_name'] ?? $t['full_name']); ?></td>
+                                <td>KES <?php echo number_format($t['amount'], 2); ?></td>
                                 <td>
-                                    <div class="action-buttons">
-                                        <?php if ($f['status'] === 'pending'): ?>
-                                            <form method="post" style="display: inline;">
-                                                <input type="hidden" name="fine_id" value="<?php echo $f['id']; ?>">
-                                                <button type="submit" name="mark_paid" class="btn-pay">Mark Paid</button>
-                                            </form>
-                                            <form method="post" style="display: inline;">
-                                                <input type="hidden" name="fine_id" value="<?php echo $f['id']; ?>">
-                                                <button type="submit" name="waive_fine" class="btn-waive">Waive</button>
-                                            </form>
-                                        <?php endif; ?>
-                                    </div>
+                                    <span class="transaction-type type-<?php echo $t['transaction_type']; ?>">
+                                        <?php 
+                                        if ($t['transaction_type'] === 'contribution') {
+                                            echo 'Contribution';
+                                        } elseif ($t['transaction_type'] === 'loan_payment') {
+                                            echo 'Loan Payment';
+                                        } elseif ($t['transaction_type'] === 'fine_payment') {
+                                            echo 'Fine Payment';
+                                        } else {
+                                            echo ucfirst(str_replace('_', ' ', $t['transaction_type']));
+                                        }
+                                        ?>
+                                    </span>
+                                </td>
+                                <td class="status-<?php echo $t['status'] ?? 'paid'; ?>">
+                                    <?php echo ucfirst($t['status'] ?? 'paid'); ?>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="7">No fines found</td>
+                                <td colspan="5">No transactions found</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>

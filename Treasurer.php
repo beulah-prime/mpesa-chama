@@ -245,10 +245,10 @@ if ($_POST) {
                 <li><a href="Contributions.php">View Contributions</a></li>
                 <li><a href="Treasurer.php#record-contributions">Record Contributions</a></li>
                 <li><a href="Loans.php">View Loans</a></li>
-                <li><a href="Treasurer.php#manage-loans">Manage Loans</a></li>
-                <li><a href="Treasurer.php#manage-fines">Manage Fines</a></li>
-                <li><a href="Treasurer.php#transactions">Transactions</a></li>
-                <li><a href="Treasurer.php#reports">Reports</a></li>
+                <li><a href="manage_loans.php">Manage Loans</a></li>
+                <li><a href="fines.php">Manage Fines</a></li>
+                <li><a href="transactions.php">Transactions</a></li>
+                <li><a href="reports.php">Reports</a></li>
                 <li><a href="logout.php">Logout</a></li>
             </ul>
         </div>
