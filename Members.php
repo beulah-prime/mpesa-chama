@@ -119,13 +119,14 @@ foreach ($contributions as $c) {
 
         aside {
             width: 260px;
-            background: linear-gradient(180deg, #00A651, #008542);
+            background: linear-gradient(180deg, #00A651, #00783d);
             color: white;
             height: 100vh;
             position: fixed;
             overflow-y: auto;
             z-index: 1000;
             transition: all 0.3s ease;
+            box-shadow: 3px 0 10px rgba(0,0,0,0.1);
         }
 
         .top {
@@ -133,7 +134,8 @@ foreach ($contributions as $c) {
             justify-content: space-between;
             align-items: center;
             padding: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.1);
         }
 
         .logo {
@@ -141,6 +143,7 @@ foreach ($contributions as $c) {
             font-weight: bold;
             color: white;
             text-decoration: none;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
         .close {
@@ -154,14 +157,14 @@ foreach ($contributions as $c) {
             align-items: center;
             padding: 15px 20px;
             text-decoration: none;
-            color: rgba(255,255,255,0.8);
+            color: #ffffff;
             transition: all 0.3s ease;
             border-left: 4px solid transparent;
         }
 
         .sidebar a:hover, .sidebar a.active {
-            background: rgba(255,255,255,0.1);
-            color: white;
+            background: rgba(255,255,255,0.2);
+            color: #ffffff;
             border-left: 4px solid #fff;
         }
 
