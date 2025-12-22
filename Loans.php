@@ -108,7 +108,7 @@ foreach ($loans as $l) {
           <a href="Treasurer.php">Record Contributions</a>
         <?php else: ?>
           <a href="Members.php" class="<?php echo (basename($_SERVER['PHP_SELF']) === 'Members.php') ? 'active' : ''; ?>">Dashboard</a>
-          <a href="Members.php#my-contributions">My Contributions</a>
+          <a href="loan_repayment.php">Loan Repayment</a>
         <?php endif; ?>
         <a href="Loans.php" class="<?php echo (basename($_SERVER['PHP_SELF']) === 'Loans.php') ? 'active' : ''; ?>">Loans</a>
         <a href="Contributions.php">Contributions</a>

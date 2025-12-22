@@ -244,6 +244,7 @@ if ($_POST) {
                 <li><a href="Treasurer.php">Dashboard</a></li>
                 <li><a href="Contributions.php">View Contributions</a></li>
                 <li><a href="Treasurer.php#record-contributions">Record Contributions</a></li>
+                <li><a href="Loans.php">View Loans</a></li>
                 <li><a href="Treasurer.php#manage-loans">Manage Loans</a></li>
                 <li><a href="Treasurer.php#manage-fines">Manage Fines</a></li>
                 <li><a href="Treasurer.php#transactions">Transactions</a></li>

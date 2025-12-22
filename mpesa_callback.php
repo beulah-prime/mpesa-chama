@@ -207,16 +207,37 @@ function updateRelatedRecords($member_id, $amount, $mpesa_code, $account_number)
     }
     
     // If no matching fine, try to match to a pending loan repayment
+    // First, try to match by account number if it contains a loan repayment ID
+    if (!empty($account_number) && strpos($account_number, 'LOAN-') !== false) {
+        // Extract the repayment ID from the account number
+        $repayment_id = str_replace('LOAN-', '', $account_number);
+
+        $db->query("
+            UPDATE loan_repayments
+            SET amount_paid = :amount, payment_date = CURDATE(), status = 'paid'
+            WHERE id = :repayment_id AND status = 'pending'
+        ");
+        $db->bind(':amount', $amount);
+        $db->bind(':repayment_id', $repayment_id);
+        $loan_updated = $db->execute();
+
+        if ($loan_updated && $db->rowCount() > 0) {
+            error_log("Updated loan repayment ID $repayment_id with M-Pesa code $mpesa_code");
+            return;
+        }
+    }
+
+    // If not matched by account number, try to match by amount and member
     $db->query("
-        UPDATE loan_repayments 
-        SET amount_paid = :amount, payment_date = CURDATE(), status = 'paid' 
+        UPDATE loan_repayments
+        SET amount_paid = :amount, payment_date = CURDATE(), status = 'paid'
         WHERE member_id = :member_id AND amount_due = :amount AND status = 'pending'
         ORDER BY created_at DESC LIMIT 1
     ");
     $db->bind(':amount', $amount);
     $db->bind(':member_id', $member_id);
     $loan_updated = $db->execute();
-    
+
     if ($loan_updated && $db->rowCount() > 0) {
         error_log("Updated loan repayment for member $member_id with M-Pesa code $mpesa_code");
         return;

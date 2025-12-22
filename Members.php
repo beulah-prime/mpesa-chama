@@ -186,9 +186,13 @@ foreach ($contributions as $c) {
                     <span class="material-icons-sharp">grid_view</span>
                     <h3>Make Payment</h3>
                 </a>
-                <a href="Members.php#my-loans">
+                <a href="Loans.php">
                     <span class="material-icons-sharp">grid_view</span>
                     <h3>My Loans</h3>
+                </a>
+                <a href="loan_repayment.php">
+                    <span class="material-icons-sharp">grid_view</span>
+                    <h3>Loan Repayment</h3>
                 </a>
                 <a href="Members.php#my-fines">
                     <span class="material-icons-sharp">grid_view</span>
