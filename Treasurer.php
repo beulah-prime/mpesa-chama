@@ -242,6 +242,7 @@ if ($_POST) {
             <span class="logo">Integrated</span>
             <ul>
                 <li><a href="Treasurer.php">Dashboard</a></li>
+                <li><a href="Contributions.php">View Contributions</a></li>
                 <li><a href="Treasurer.php#record-contributions">Record Contributions</a></li>
                 <li><a href="Treasurer.php#manage-loans">Manage Loans</a></li>
                 <li><a href="Treasurer.php#manage-fines">Manage Fines</a></li>

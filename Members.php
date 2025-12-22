@@ -178,9 +178,13 @@ foreach ($contributions as $c) {
                     <span class="material-icons-sharp">grid_view</span>
                     <h3>Dashboard</h3>
                 </a>
-                <a href="Members.php#my-contributions">
+                <a href="Contributions.php">
                     <span class="material-icons-sharp">grid_view</span>
                     <h3>My Contributions</h3>
+                </a>
+                <a href="payment.php">
+                    <span class="material-icons-sharp">grid_view</span>
+                    <h3>Make Payment</h3>
                 </a>
                 <a href="Members.php#my-loans">
                     <span class="material-icons-sharp">grid_view</span>

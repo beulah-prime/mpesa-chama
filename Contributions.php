@@ -99,7 +99,7 @@ foreach ($contributions as $c) {
           <a href="Treasurer.php">Record Contributions</a>
         <?php else: ?>
           <a href="Members.php" class="<?php echo (basename($_SERVER['PHP_SELF']) === 'Members.php') ? 'active' : ''; ?>">Dashboard</a>
-          <a href="Members.php#my-contributions">My Contributions</a>
+          <a href="payment.php">Make Payment</a>
         <?php endif; ?>
         <a href="Loans.php">Loans</a>
         <a href="Contributions.php" class="<?php echo (basename($_SERVER['PHP_SELF']) === 'Contributions.php') ? 'active' : ''; ?>">Contributions</a>

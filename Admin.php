@@ -187,9 +187,12 @@ $all_users = $admin->getAllUsersByRole();
             <span class="logo">Integrated</span>
             <ul>
                 <li><a href="Admin.php">Dashboard</a></li>
-                <li><a href="Admin.php#manage-members">Manage Members</a></li>
+                <li><a href="Members.php">Manage Members</a></li>
+                <li><a href="Contributions.php">View Contributions</a></li>
+                <li><a href="Loans.php">Manage Loans</a></li>
+                <li><a href="Fines.php">Manage Fines</a></li>
+                <li><a href="settings.php">System Settings</a></li>
                 <li><a href="Admin.php#pending-approvals">Pending Approvals</a></li>
-                <li><a href="Admin.php#system-settings">System Settings</a></li>
                 <li><a href="Admin.php#reports">Reports</a></li>
                 <li><a href="logout.php">Logout</a></li>
             </ul>
