@@ -198,11 +198,11 @@ foreach ($contributions as $c) {
                     <span class="material-icons-sharp">grid_view</span>
                     <h3>My Fines</h3>
                 </a>
-                <a href="Members.php#profile">
+                <a href="#profile">
                     <span class="material-icons-sharp">grid_view</span>
                     <h3>Profile</h3>
                 </a>
-                <a href="Members.php#settings">
+                <a href="#settings">
                     <span class="material-icons-sharp">grid_view</span>
                     <h3>Settings</h3>
                 </a>
@@ -342,12 +342,74 @@ foreach ($contributions as $c) {
             <p>No fines recorded.</p>
             <?php endif; ?>
         </div>
+
+        <div id="profile" style="margin-top: 30px;">
+            <h2>My Profile</h2>
+            <div class="data-table" style="padding: 20px;">
+                <h3>Personal Information</h3>
+                <p><strong>Name:</strong> <?php echo htmlspecialchars($user['full_name']); ?></p>
+                <p><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
+                <p><strong>Phone:</strong> <?php echo htmlspecialchars($user['phone_number']); ?></p>
+                <p><strong>ID Number:</strong> <?php echo htmlspecialchars($user['id_number']); ?></p>
+                <p><strong>Member Number:</strong> <?php echo htmlspecialchars($member_result['id'] ? 'MEM' . str_pad($member_result['id'], 6, '0', STR_PAD_LEFT) : 'N/A'); ?></p>
+                <p><strong>Role:</strong> <?php echo ucfirst(htmlspecialchars($user['role'])); ?></p>
+                <p><strong>Join Date:</strong> <?php echo htmlspecialchars($user['created_at']); ?></p>
+            </div>
+        </div>
+
+        <div id="settings" style="margin-top: 30px;">
+            <h2>Account Settings</h2>
+            <div class="data-table" style="padding: 20px;">
+                <h3>Change Password</h3>
+                <form id="changePasswordForm" method="post" style="max-width: 400px;">
+                    <div style="margin-bottom: 15px;">
+                        <label for="current_password" style="display: block; margin-bottom: 5px;">Current Password:</label>
+                        <input type="password" id="current_password" name="current_password" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" required>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label for="new_password" style="display: block; margin-bottom: 5px;">New Password:</label>
+                        <input type="password" id="new_password" name="new_password" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" required>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label for="confirm_new_password" style="display: block; margin-bottom: 5px;">Confirm New Password:</label>
+                        <input type="password" id="confirm_new_password" name="confirm_new_password" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" required>
+                    </div>
+                    <button type="submit" style="background-color: #00A651; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer;">Change Password</button>
+                </form>
+
+                <h3 style="margin-top: 30px;">Account Status</h3>
+                <p><strong>Status:</strong> <span class="status-<?php echo $user['status']; ?>"><?php echo ucfirst(htmlspecialchars($user['status'])); ?></span></p>
+            </div>
+        </div>
     </main>
 
     <script>
         // Close button functionality
         document.getElementById('close-btn').addEventListener('click', function() {
             document.querySelector('aside').style.display = 'none';
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Handle password change form
+        document.getElementById('changePasswordForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Password change functionality would be implemented here. For now, please contact the administrator to change your password.');
         });
     </script>
 </body>
