@@ -15,35 +15,39 @@ try {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES => false,
     ]);
-    
+
     echo "Connected to MySQL successfully!\n";
-    
+
+    // Create the database if it doesn't exist
+    $pdo->exec("CREATE DATABASE IF NOT EXISTS `$database`");
+    echo "Database '$database' created or already exists.\n";
+
+    // Select the database
+    $pdo->exec("USE `$database`");
+
     // Read the SQL file
     $sql = file_get_contents('database_setup.sql');
-    
+
     if ($sql === false) {
         throw new Exception('Could not read the database_setup.sql file');
     }
-    
+
     // Execute the SQL
     $pdo->exec($sql);
-    
-    echo "Database and tables created successfully!\n";
-    
-    // Now connect to the specific database
-    $pdo->exec("USE $database");
-    
+
+    echo "Tables created successfully!\n";
+
     // Test the connection by checking if tables were created
     $stmt = $pdo->query("SHOW TABLES");
     $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
-    
+
     echo "\nTables created:\n";
     foreach ($tables as $table) {
         echo "- $table\n";
     }
-    
+
     echo "\nDatabase setup completed successfully!\n";
-    
+
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage() . "\n";
 } catch (Exception $e) {
