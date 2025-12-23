@@ -394,51 +394,56 @@ $all_users = $admin->getAllUsersByRole();
 
             <!-- Edit User Modal -->
             <div id="editUserModal" class="modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5);">
-                <div class="modal-content" style="background-color: #fefefe; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 400px; border-radius: 5px;">
-                    <span onclick="closeModal()" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
-                    <h2>Edit User</h2>
-                    <form id="editUserForm">
-                        <input type="hidden" id="edit_user_id" name="user_id">
+                <div class="modal-content" style="background-color: #fefefe; margin: 2% auto; padding: 0; border: 1px solid #888; width: 90%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); max-height: 90vh; display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #eee;">
+                        <h2 style="margin: 0; color: #333;">Edit User</h2>
+                        <span onclick="closeModal()" style="color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; line-height: 1;">&times;</span>
+                    </div>
+                    <div style="overflow-y: auto; max-height: 60vh; padding: 20px; flex: 1;">
+                        <form id="editUserForm" method="POST">
+                            <input type="hidden" id="edit_user_id" name="user_id">
 
-                        <div class="form-group">
-                            <label for="edit_full_name">Full Name:</label>
-                            <input type="text" id="edit_full_name" name="full_name" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
-                        </div>
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label for="edit_full_name" style="display: block; margin-bottom: 5px; font-weight: bold;">Full Name:</label>
+                                <input type="text" id="edit_full_name" name="full_name" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                            </div>
 
-                        <div class="form-group">
-                            <label for="edit_email">Email:</label>
-                            <input type="email" id="edit_email" name="email" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
-                        </div>
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label for="edit_email" style="display: block; margin-bottom: 5px; font-weight: bold;">Email:</label>
+                                <input type="email" id="edit_email" name="email" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                            </div>
 
-                        <div class="form-group">
-                            <label for="edit_phone_number">Phone Number:</label>
-                            <input type="text" id="edit_phone_number" name="phone_number" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
-                        </div>
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label for="edit_phone_number" style="display: block; margin-bottom: 5px; font-weight: bold;">Phone Number:</label>
+                                <input type="text" id="edit_phone_number" name="phone_number" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                            </div>
 
-                        <div class="form-group">
-                            <label for="edit_id_number">ID Number:</label>
-                            <input type="text" id="edit_id_number" name="id_number" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
-                        </div>
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label for="edit_id_number" style="display: block; margin-bottom: 5px; font-weight: bold;">ID Number:</label>
+                                <input type="text" id="edit_id_number" name="id_number" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                            </div>
 
-                        <div class="form-group">
-                            <label for="edit_role">Role:</label>
-                            <select id="edit_role" name="role" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
-                                <option value="admin">Admin</option>
-                                <option value="treasurer">Treasurer</option>
-                                <option value="member">Member</option>
-                            </select>
-                        </div>
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label for="edit_role" style="display: block; margin-bottom: 5px; font-weight: bold;">Role:</label>
+                                <select id="edit_role" name="role" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                                    <option value="admin">Admin</option>
+                                    <option value="treasurer">Treasurer</option>
+                                    <option value="member">Member</option>
+                                </select>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="edit_status">Status:</label>
-                            <select id="edit_status" name="status" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
-
-                        <button type="submit" class="btn btn-edit" style="background-color: #007BFF; color: white; padding: 10px 20px; border: none; border-radius: 3px; cursor: pointer;">Update User</button>
-                    </form>
+                            <div class="form-group" style="margin-bottom: 20px;">
+                                <label for="edit_status" style="display: block; margin-bottom: 5px; font-weight: bold;">Status:</label>
+                                <select id="edit_status" name="status" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div style="padding: 15px 20px; border-top: 1px solid #eee; text-align: right; background-color: #f9f9f9;">
+                        <button type="submit" form="editUserForm" class="btn btn-edit" style="background-color: #007BFF; color: white; padding: 12px 25px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">Update User</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -511,13 +516,17 @@ $all_users = $admin->getAllUsersByRole();
         document.getElementById('editUserForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
+            // Get form data as an object
             const formData = new FormData(this);
             const params = new URLSearchParams();
             params.append('action', 'edit');
 
+            // Append all form fields to the URLSearchParams
             for (const [key, value] of formData.entries()) {
                 params.append(key, value);
             }
+
+            console.log('Sending form data:', params.toString());
 
             fetch('user_management.php', {
                 method: 'POST',
@@ -526,20 +535,27 @@ $all_users = $admin->getAllUsersByRole();
                 },
                 body: params
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok. Status: ' + response.status);
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log('Server response:', data);
                 if (data.success) {
                     alert(data.message);
                     closeModal();
                     // Reload the page to update the table
                     location.reload();
                 } else {
-                    alert('Error: ' + data.message);
+                    alert('Error: ' + (data.message || 'Unknown error occurred'));
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred while updating the user.');
+                alert('An error occurred while updating the user: ' + error.message);
             });
         });
 

@@ -342,6 +342,7 @@ class User {
 
         if ($existing_user) {
             // Email already exists for another user
+            error_log("Update failed: Email already exists for another user");
             return false;
         }
 
@@ -358,7 +359,15 @@ class User {
         $this->db->bind(':role', $role);
         $this->db->bind(':status', $status);
 
-        return $this->db->execute();
+        $result = $this->db->execute();
+
+        if ($result) {
+            error_log("User updated successfully: ID=$user_id");
+        } else {
+            error_log("User update failed: ID=$user_id");
+        }
+
+        return $result;
     }
 
     /**

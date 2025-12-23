@@ -71,13 +71,16 @@ try {
                 throw new Exception('Invalid phone number format');
             }
 
+            // Debug: Log the values being passed
+            error_log("Updating user: ID=$user_id, Name=$full_name, Email=$email, Phone=$phone_number, ID Number=$id_number, Role=$role, Status=$status");
+
             // Update the user
             $result = $userManager->updateUser($user_id, $full_name, $email, $phone_number, $id_number, $role, $status);
 
             if ($result) {
                 echo json_encode(['success' => true, 'message' => 'User updated successfully']);
             } else {
-                throw new Exception('Failed to update user');
+                throw new Exception('Failed to update user - may be due to duplicate email or database error');
             }
             break;
 
