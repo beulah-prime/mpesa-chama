@@ -320,6 +320,143 @@ class User {
 
         return $this->db->execute();
     }
+
+    /**
+     * Update an existing user
+     *
+     * @param int $user_id ID of the user to update
+     * @param string $full_name Full name of the user
+     * @param string $email Email address of the user
+     * @param string $phone_number Phone number of the user
+     * @param string $id_number National ID number of the user
+     * @param string $role User role (admin, treasurer, member)
+     * @param string $status User status (active, inactive)
+     * @return bool True if update was successful, false otherwise
+     */
+    public function updateUser($user_id, $full_name, $email, $phone_number, $id_number, $role, $status) {
+        // First, check if another user already has this email (excluding current user)
+        $this->db->query('SELECT id FROM users WHERE email = :email AND id != :user_id');
+        $this->db->bind(':email', $email);
+        $this->db->bind(':user_id', $user_id);
+        $existing_user = $this->db->single();
+
+        if ($existing_user) {
+            // Email already exists for another user
+            return false;
+        }
+
+        // Prepare SQL statement to update user information
+        $sql = 'UPDATE users SET full_name = :full_name, email = :email, phone_number = :phone_number, id_number = :id_number, role = :role, status = :status WHERE id = :user_id';
+        $this->db->query($sql);
+
+        // Bind all parameters to prevent SQL injection
+        $this->db->bind(':user_id', $user_id);
+        $this->db->bind(':full_name', $full_name);
+        $this->db->bind(':email', $email);
+        $this->db->bind(':phone_number', $phone_number);
+        $this->db->bind(':id_number', $id_number);
+        $this->db->bind(':role', $role);
+        $this->db->bind(':status', $status);
+
+        return $this->db->execute();
+    }
+
+    /**
+     * Delete a user by ID
+     * This method will delete the user and associated member record
+     *
+     * @param int $user_id ID of the user to delete
+     * @return bool True if deletion was successful, false otherwise
+     */
+    public function deleteUser($user_id) {
+        try {
+            // Begin transaction for data integrity
+            $this->db->beginTransaction();
+
+            // First, get the user to verify they exist
+            $this->db->query('SELECT id FROM users WHERE id = :user_id');
+            $this->db->bind(':user_id', $user_id);
+            $user = $this->db->single();
+
+            if (!$user) {
+                return false;
+            }
+
+            // Delete associated member record
+            $this->db->query('DELETE FROM members WHERE user_id = :user_id');
+            $this->db->bind(':user_id', $user_id);
+            $this->db->execute();
+
+            // Delete associated contributions
+            // First get the member ID to delete contributions
+            $this->db->query('SELECT id FROM members WHERE user_id = :user_id');
+            $this->db->bind(':user_id', $user_id);
+            $member_result = $this->db->single();
+
+            if ($member_result) {
+                $member_id = $member_result['id'];
+
+                // Delete contributions for this member
+                $this->db->query('DELETE FROM contributions WHERE member_id = :member_id');
+                $this->db->bind(':member_id', $member_id);
+                $this->db->execute();
+
+                // Delete fines for this member
+                $this->db->query('DELETE FROM fines WHERE member_id = :member_id');
+                $this->db->bind(':member_id', $member_id);
+                $this->db->execute();
+
+                // Delete loans for this member
+                $this->db->query('DELETE FROM loans WHERE member_id = :member_id');
+                $this->db->bind(':member_id', $member_id);
+                $this->db->execute();
+
+                // Delete loan repayments for this member
+                $this->db->query('DELETE FROM loan_repayments WHERE member_id = :member_id');
+                $this->db->bind(':member_id', $member_id);
+                $this->db->execute();
+
+                // Delete M-Pesa transactions for this member
+                $this->db->query('DELETE FROM mpesa_transactions WHERE member_id = :member_id');
+                $this->db->bind(':member_id', $member_id);
+                $this->db->execute();
+
+                // Delete M-Pesa STK requests for this member
+                $this->db->query('DELETE FROM mpesa_stk_requests WHERE phone_number IN (SELECT phone_number FROM users WHERE id = :user_id)');
+                $this->db->bind(':user_id', $user_id);
+                $this->db->execute();
+            }
+
+            // Finally, delete the user
+            $this->db->query('DELETE FROM users WHERE id = :user_id');
+            $this->db->bind(':user_id', $user_id);
+            $result = $this->db->execute();
+
+            // Commit the transaction if all operations were successful
+            $this->db->commit();
+
+            return $result;
+        } catch (Exception $e) {
+            // Rollback the transaction in case of error
+            $this->db->rollback();
+            error_log("Error deleting user: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get a user by ID
+     *
+     * @param int $user_id ID of the user to retrieve
+     * @return array|false User data array if found, false otherwise
+     */
+    public function getUserById($user_id) {
+        // Prepare SQL statement to get user by ID
+        $this->db->query('SELECT u.*, m.member_number FROM users u LEFT JOIN members m ON u.id = m.user_id WHERE u.id = :user_id');
+        $this->db->bind(':user_id', $user_id);
+
+        return $this->db->single();
+    }
 }
 
 /**

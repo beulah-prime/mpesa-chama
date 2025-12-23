@@ -222,22 +222,274 @@ $all_users = $admin->getAllUsersByRole();
                 </thead>
                 <tbody>
                     <?php foreach ($all_users as $usr): ?>
-                    <tr>
+                    <tr data-user-id="<?php echo $usr['id']; ?>">
                         <td><?php echo htmlspecialchars($usr['member_number'] ?? 'N/A'); ?></td>
                         <td><?php echo htmlspecialchars($usr['full_name']); ?></td>
                         <td><?php echo htmlspecialchars($usr['email']); ?></td>
                         <td><?php echo htmlspecialchars($usr['role']); ?></td>
                         <td class="status-<?php echo $usr['status']; ?>"><?php echo ucfirst($usr['status']); ?></td>
                         <td>
-                            <a href="#" class="btn btn-edit">Edit</a>
-                            <a href="#" class="btn btn-delete">Delete</a>
+                            <a href="#" class="btn btn-edit" onclick="editUser(<?php echo $usr['id']; ?>)">Edit</a>
+                            <a href="#" class="btn btn-delete" onclick="deleteUser(<?php echo $usr['id']; ?>, '<?php echo addslashes(htmlspecialchars($usr['full_name'])); ?>')">Delete</a>
                         </td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
+
+            <!-- Pending Approvals Section -->
+            <div id="pending-approvals" style="margin-top: 40px;">
+                <h2>Pending Approvals</h2>
+
+                <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                    <!-- Pending Loans Card -->
+                    <div style="flex: 1; background-color: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 4px solid #007BFF;">
+                        <h3>Pending Loan Applications</h3>
+                        <?php
+                        // Count pending loans
+                        $loan = new Loan();
+                        $all_loans = $loan->getAllLoans();
+                        $pending_loans = 0;
+                        foreach ($all_loans as $l) {
+                            if ($l['status'] === 'pending') {
+                                $pending_loans++;
+                            }
+                        }
+                        ?>
+                        <p style="font-size: 24px; font-weight: bold; color: #007BFF;"><?php echo $pending_loans; ?></p>
+                        <a href="Loans.php" style="color: #007BFF; text-decoration: none;">View Applications &rarr;</a>
+                    </div>
+
+                    <!-- Pending Contributions Card -->
+                    <div style="flex: 1; background-color: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 4px solid #28a745;">
+                        <h3>Pending Contributions</h3>
+                        <?php
+                        // Count pending contributions
+                        $contribution = new Contribution();
+                        $all_contributions = $contribution->getAllContributions();
+                        $pending_contributions = 0;
+                        foreach ($all_contributions as $c) {
+                            if ($c['status'] === 'pending') {
+                                $pending_contributions++;
+                            }
+                        }
+                        ?>
+                        <p style="font-size: 24px; font-weight: bold; color: #28a745;"><?php echo $pending_contributions; ?></p>
+                        <a href="Contributions.php" style="color: #28a745; text-decoration: none;">View Contributions &rarr;</a>
+                    </div>
+
+                    <!-- Pending Fines Card -->
+                    <div style="flex: 1; background-color: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 4px solid #ffc107;">
+                        <h3>Pending Fines</h3>
+                        <?php
+                        // Count pending fines
+                        $fine = new Fine();
+                        $all_fines = $fine->getAllFines();
+                        $pending_fines = 0;
+                        foreach ($all_fines as $f) {
+                            if ($f['status'] === 'pending') {
+                                $pending_fines++;
+                            }
+                        }
+                        ?>
+                        <p style="font-size: 24px; font-weight: bold; color: #ffc107;"><?php echo $pending_fines; ?></p>
+                        <a href="Fines.php" style="color: #ffc107; text-decoration: none;">View Fines &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Detailed Pending Loans Table -->
+                <?php if ($pending_loans > 0): ?>
+                <h3>Pending Loan Applications</h3>
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Member Name</th>
+                            <th>Member Number</th>
+                            <th>Loan Amount</th>
+                            <th>Date Applied</th>
+                            <th>Duration</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($all_loans as $l): ?>
+                            <?php if ($l['status'] === 'pending'): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($l['full_name']); ?></td>
+                                <td><?php echo htmlspecialchars($l['member_number']); ?></td>
+                                <td>KES <?php echo number_format($l['loan_amount'], 2); ?></td>
+                                <td><?php echo htmlspecialchars($l['date_applied']); ?></td>
+                                <td><?php echo $l['duration_months']; ?> months</td>
+                                <td>
+                                    <a href="Loans.php" class="btn btn-edit">Review</a>
+                                </td>
+                            </tr>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <?php endif; ?>
+            </div>
+
+            <!-- Edit User Modal -->
+            <div id="editUserModal" class="modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5);">
+                <div class="modal-content" style="background-color: #fefefe; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 400px; border-radius: 5px;">
+                    <span onclick="closeModal()" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+                    <h2>Edit User</h2>
+                    <form id="editUserForm">
+                        <input type="hidden" id="edit_user_id" name="user_id">
+
+                        <div class="form-group">
+                            <label for="edit_full_name">Full Name:</label>
+                            <input type="text" id="edit_full_name" name="full_name" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit_email">Email:</label>
+                            <input type="email" id="edit_email" name="email" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit_phone_number">Phone Number:</label>
+                            <input type="text" id="edit_phone_number" name="phone_number" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit_id_number">ID Number:</label>
+                            <input type="text" id="edit_id_number" name="id_number" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit_role">Role:</label>
+                            <select id="edit_role" name="role" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                                <option value="admin">Admin</option>
+                                <option value="treasurer">Treasurer</option>
+                                <option value="member">Member</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit_status">Status:</label>
+                            <select id="edit_status" name="status" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-edit" style="background-color: #007BFF; color: white; padding: 10px 20px; border: none; border-radius: 3px; cursor: pointer;">Update User</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script>
+        // Function to edit a user
+        function editUser(userId) {
+            // Show the modal
+            document.getElementById('editUserModal').style.display = 'block';
+
+            // Fetch user data
+            fetch('user_management.php?action=get&user_id=' + userId, {
+                method: 'GET'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const userData = data.data;
+                    document.getElementById('edit_user_id').value = userData.id;
+                    document.getElementById('edit_full_name').value = userData.full_name;
+                    document.getElementById('edit_email').value = userData.email;
+                    document.getElementById('edit_phone_number').value = userData.phone_number;
+                    document.getElementById('edit_id_number').value = userData.id_number;
+                    document.getElementById('edit_role').value = userData.role;
+                    document.getElementById('edit_status').value = userData.status;
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while fetching user data.');
+            });
+        }
+
+        // Function to delete a user
+        function deleteUser(userId, userName) {
+            if (confirm('Are you sure you want to delete user "' + userName + '"? This action cannot be undone.')) {
+                fetch('user_management.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'action=delete&user_id=' + userId
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        // Reload the page to update the table
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting the user.');
+                });
+            }
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById('editUserModal').style.display = 'none';
+        }
+
+        // Handle form submission for editing user
+        document.getElementById('editUserForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const params = new URLSearchParams();
+            params.append('action', 'edit');
+
+            for (const [key, value] of formData.entries()) {
+                params.append(key, value);
+            }
+
+            fetch('user_management.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: params
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    closeModal();
+                    // Reload the page to update the table
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating the user.');
+            });
+        });
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('editUserModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
 </body>
 </html>
 
