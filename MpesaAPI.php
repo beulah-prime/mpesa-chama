@@ -458,31 +458,75 @@ class MpesaAPI {
     private function processSuccessfulPayment($checkout_request_id, $mpesa_code, $amount_paid, $phone_number) {
         // First, get the original request details
         $this->db->query("
-            SELECT * FROM mpesa_stk_requests 
+            SELECT * FROM mpesa_stk_requests
             WHERE checkout_request_id = :checkout_request_id
         ");
         $this->db->bind(':checkout_request_id', $checkout_request_id);
         $request = $this->db->single();
-        
+
         if (!$request) {
             error_log("Could not find STK request for ID: $checkout_request_id");
             return false;
         }
-        
-        // In a real scenario, you'd link this to a specific contribution or fine
-        // For now, I'll update the contribution record that matches the amount and phone number
-        // You'll need to customize this based on your specific business logic
-        
-        // For this example, I'll assume we need to update a pending contribution
-        // You might need to modify this to match your specific use case
+
+        // Find the member associated with this phone number
         $this->db->query("
-            UPDATE contributions 
-            SET status = 'confirmed', mpesa_code = :mpesa_code 
-            WHERE amount = :amount AND payment_method = 'mpesa' AND status = 'pending'
+            SELECT m.id as member_id
+            FROM members m
+            JOIN users u ON m.user_id = u.id
+            WHERE u.phone_number = :phone_number
+        ");
+        $this->db->bind(':phone_number', $phone_number);
+        $member = $this->db->single();
+
+        if (!$member) {
+            error_log("No member found for phone number: $phone_number");
+            return false;
+        }
+
+        $member_id = $member['member_id'];
+
+        // Update the contribution record that matches the amount and member
+        $this->db->query("
+            UPDATE contributions
+            SET status = 'confirmed', mpesa_code = :mpesa_code
+            WHERE member_id = :member_id AND amount = :amount AND payment_method = 'mpesa' AND status = 'pending'
+            ORDER BY created_at DESC
+            LIMIT 1
         ");
         $this->db->bind(':mpesa_code', $mpesa_code);
+        $this->db->bind(':member_id', $member_id);
         $this->db->bind(':amount', $request['amount']);
-        return $this->db->execute();
+        $result = $this->db->execute();
+
+        // Also update the original STK request with the member_id for reference
+        $this->db->query("
+            UPDATE mpesa_stk_requests
+            SET member_id = :member_id
+            WHERE checkout_request_id = :checkout_request_id
+        ");
+        $this->db->bind(':member_id', $member_id);
+        $this->db->bind(':checkout_request_id', $checkout_request_id);
+        $this->db->execute();
+
+        // Also insert into mpesa_transactions table for audit trail
+        $this->db->query("
+            INSERT INTO mpesa_transactions (
+                transaction_id, member_id, amount, transaction_type,
+                reference_id, mpesa_code, transaction_date, status
+            ) VALUES (
+                :transaction_id, :member_id, :amount, 'contribution',
+                :reference_id, :mpesa_code, NOW(), 'confirmed'
+            )
+        ");
+        $this->db->bind(':transaction_id', uniqid('txn_', true));
+        $this->db->bind(':member_id', $member_id);
+        $this->db->bind(':amount', $amount_paid);
+        $this->db->bind(':reference_id', $request['id'] ?? 0); // Use the request ID as reference
+        $this->db->bind(':mpesa_code', $mpesa_code);
+        $this->db->execute();
+
+        return $result;
     }
     
     /**
